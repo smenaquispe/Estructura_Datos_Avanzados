@@ -1,30 +1,40 @@
 import matplotlib.pyplot as plt
 import os
 import time
+import numpy as np
 
-def histograma(datos, bins, titulo, x, y):
+def histograma(datos, titulo, x, y, nombre):
+    
+    bins = 10
+    
     plt.hist(datos, bins)
     plt.title(titulo)
     plt.xlabel(x)
     plt.ylabel(y)
-    plt.show()
+
+    plt.savefig("./images/" + str(nombre) + ".png")
+
+    plt.close()
 
 def main():
 
     if not os.path.exists("distancias.exe"):    
         os.system("g++ distancias.cpp -o distancias.exe")
 
-    cant = input("Cantidad de numeros aleatorios: ")
-    os.system("distancias.exe " + str(cant))
-    
-    time.sleep(1)
+    dimensiones = [10, 50, 100, 500, 1000, 2000, 5000]
 
-    with open("distancias.txt") as archivo:
-        datos = []
-        for linea in archivo:
-            datos.append(float(linea))
+    for d in dimensiones:
+        os.system("distancias.exe " + str(d))
+        time.sleep(1)
+
+        with open("distancias.txt") as archivo:
+            datos = []
+            for linea in archivo:
+                datos.append(float(linea))
     
-    histograma(datos, 10, "Distancia de los planetas al sol", "Distancia", "Frecuencia")
+        histograma(datos, f"Distancia entre puntos de dimension {d}", "Distancia", "Frecuencia", d)
+        
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()
